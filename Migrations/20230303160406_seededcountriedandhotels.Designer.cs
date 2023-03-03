@@ -12,7 +12,7 @@ namespace HotelListing.API.Migrations
 {
     [DbContext(typeof(HotelListingDbContext))]
     [Migration("20230303160406_seededcountriedandhotels")]
-    partial class seededcountriedandhotels
+    partial class SeededCountriedAndHotels
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
