@@ -1,4 +1,7 @@
+using HotelListing.API.Configuratons;
+using HotelListing.API.Contracts;
 using HotelListing.API.Data;
+using HotelListing.API.Repository;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -23,7 +26,9 @@ builder.Services.AddCors(options => {
         .AllowAnyMethod());
 });
 builder.Host.UseSerilog((ctx,lc)=>lc.WriteTo.Console().ReadFrom.Configuration(ctx.Configuration));
-
+builder.Services.AddAutoMapper(typeof(MapperConfig));
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
