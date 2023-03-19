@@ -2,7 +2,7 @@
 using HotelListing.API.Data;
 using HotelListing.API.Models.Country;
 using HotelListing.API.Models.Hotels;
-using HotelListing.API.Models.Hotels.Users;
+using HotelListing.API.Models.Users;
 
 namespace HotelListing.API.Configuratons
 {

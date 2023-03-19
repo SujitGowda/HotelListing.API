@@ -4,7 +4,7 @@ using System.Text;
 using AutoMapper;
 using HotelListing.API.Contracts;
 using HotelListing.API.Data;
-using HotelListing.API.Models.Hotels.Users;
+using HotelListing.API.Models.Users;
 using Microsoft.AspNetCore.Identity;
 //using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;

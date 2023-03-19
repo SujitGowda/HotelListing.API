@@ -1,4 +1,4 @@
-﻿using HotelListing.API.Models.Hotels.Users;
+﻿using HotelListing.API.Models.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace HotelListing.API.Contracts

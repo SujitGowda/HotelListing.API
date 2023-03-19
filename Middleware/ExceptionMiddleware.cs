@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using HotelListing.API.Exceptions;
-using HotelListing.API.Models.Hotels.Users;
 using Newtonsoft.Json;
 
 namespace HotelListing.API.Middleware

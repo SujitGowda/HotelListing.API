@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 //using Microsoft.Build.Framework;
 
-namespace HotelListing.API.Models.Hotels.Users
+namespace HotelListing.API.Models.Users
 {
     public class Login
     {
