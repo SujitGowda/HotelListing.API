@@ -33,9 +33,8 @@ namespace HotelListing.API.Controllers
         [HttpGet("GetAll")]
         public async Task<ActionResult<IEnumerable<GetCountryModel>>> Getcountries()
         {
-            var country = await _countriesRepository.GetAllAsync();// countries.ToListAsync();
-            var Records =_mapper.Map<List<GetCountryModel>>(country);
-            return Ok(Records);
+            var countries = await _countriesRepository.GetAllAsync<GetCountryModel>();
+            return Ok(countries);
         }// GET: api/Countries/?StartIndex=0&PageSize=15&PageNumber=1
         [HttpGet]
         public async Task<ActionResult<PageResult<GetCountryModel>>> GetPagedcountries([FromQuery] QueryParameters queryParameters)
@@ -49,17 +48,11 @@ namespace HotelListing.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CountryDetailsModel>> GetCountry(int id)
         {
+
+
             var country = await _countriesRepository.GetDetails(id);
-
-            if (country == null)
-            {
-                //_logger.LogWarning($"No Record found in {nameof(GetCountry)}. with ID {id}.");
-                //return NotFound();
-                throw  new NotFoundException(nameof(GetCountry),id);
-            }
-
-            var countryDetails = _mapper.Map<CountryDetailsModel>(country);
-            return countryDetails;
+            return Ok(country);
+           
         }
 
         // PUT: api/Countries/5
@@ -68,23 +61,9 @@ namespace HotelListing.API.Controllers
         [Authorize]
         public async Task<IActionResult> PutCountry(int id, UpdateCountryModel updateCountryDetails)
         {
-            if (id != updateCountryDetails.Id)
-            {
-                return BadRequest("INvalid Record ID");
-            }
-
-            var country = await _countriesRepository.GetAsync(id);//countries.FindAsync(id);
-            if (country == null)
-            {
-                //return NotFound();
-                throw new NotFoundException(nameof(GetCountry), id);
-            }
-
-            _mapper.Map(updateCountryDetails, country);
-
             try
             {
-                await _countriesRepository.UpdateAsync(country);
+                await _countriesRepository.UpdateAsync(id, updateCountryDetails);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -105,18 +84,10 @@ namespace HotelListing.API.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Country>> PostCountry(CreateCountryModel createCounty)
+        public async Task<ActionResult<CountryDetailsModel>> PostCountry(CreateCountryModel createCounty)
         {
-            //var countryOld = new Country
-            //{
-            //    Name = createCounty.Name,
-            //    ShortName = createCounty.ShortName,
-            //};
-            var country= _mapper.Map<Country>(createCounty);
-            //_countriesRepository.countries.Add(country);
-            await _countriesRepository.AddAsync(country);
-
-            return CreatedAtAction("GetCountry", new { id = country.Id }, country);
+            var country = await _countriesRepository.AddAsync<CreateCountryModel, GetCountryModel>(createCounty);
+            return CreatedAtAction(nameof(GetCountry), new { id = country.Id }, country);
         }
 
         // DELETE: api/Countries/5
@@ -124,16 +95,7 @@ namespace HotelListing.API.Controllers
         [Authorize(Roles ="Administrator")]
         public async Task<IActionResult> DeleteCountry(int id)
         {
-            var country = await _countriesRepository.GetAsync(id);
-            if (country == null)
-            {
-                //return NotFound();
-                throw new NotFoundException(nameof(GetCountry), id);
-            }
             await _countriesRepository.DeleteAsync(id);
-            //_countriesRepository.countries.Remove(country);
-            //await _countriesRepository.SaveChangesAsync();
-
             return NoContent();
         }
 
