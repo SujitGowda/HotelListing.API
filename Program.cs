@@ -7,6 +7,7 @@ using HotelListing.API.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -25,7 +26,6 @@ builder.Services.AddIdentityCore<ApiUser>()
     .AddTokenProvider<DataProtectorTokenProvider<ApiUser>>("HotelListingApi")
     .AddEntityFrameworkStores<HotelListingDbContext>()
     .AddDefaultTokenProviders();
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -80,6 +80,10 @@ builder.Services.AddResponseCaching(options =>
     options.UseCaseSensitivePaths= true;
 });
 
+builder.Services.AddControllers().AddOData(options =>
+{
+    options.Filter().Select().OrderBy();
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

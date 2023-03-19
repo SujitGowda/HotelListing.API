@@ -45,9 +45,9 @@ namespace HotelListing.API.Controllers
         [HttpGet]
         public async Task<ActionResult<PageResult<GetCountryModel>>> GetPagedcountries([FromQuery] QueryParameters queryParameters)
         {
-            var pagedCountryREsult = await _countriesRepository.GetAllAsync<GetCountryModel>(queryParameters);// countries.ToListAsync();
+            var pagedCountryResult = await _countriesRepository.GetAllAsync<GetCountryModel>(queryParameters);// countries.ToListAsync();
             //var Records = _mapper.Map<List<GetCountryModel>>(country);
-            return Ok(pagedCountryREsult);
+            return Ok(pagedCountryResult);
         }
 
         // GET: api/Countries/5  
