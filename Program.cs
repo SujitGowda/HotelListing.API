@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -110,7 +112,10 @@ builder.Services.AddResponseCaching(options =>
     options.MaximumBodySize = 1024;
     options.UseCaseSensitivePaths= true;
 });
-
+builder.Services.AddHealthChecks()
+    .AddCheck<customHealthCheck>("custom health check",failureStatus:HealthStatus.Degraded,
+    tags: new[] {"custom"}
+    );
 builder.Services.AddControllers().AddOData(options =>
 {
     options.Filter().Select().OrderBy();
@@ -123,8 +128,26 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<ExceptionMiddleware>();
+//app.MapHealthChecks("/healthCheck", new HealthCheckOptions
+//{
+//    Predicate = healthcheck => healthcheck.Tags.Contains("custom"),
+//    ResultStatusCodes =
+//    {
+//        [HealthStatus.Healthy]=StatusCodes.Status200OK,
+//        [HealthStatus.Unhealthy]=StatusCodes.Status503ServiceUnavailable,
+//        [HealthStatus.Degraded]=StatusCodes.Status200OK
+//    },
+//    ResponseWriter=WriteResponce
+//});
+
+//static Task WriteResponce(HttpContext context, HealthReport healthReport)
+//{
+//    throw new NotImplementedException();
+//}
+
+app.MapHealthChecks("/health");
 app.UseSerilogRequestLogging();
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
@@ -148,3 +171,20 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+class customHealthCheck : IHealthCheck
+{
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    {
+        var isHealthy = true;
+        if (isHealthy)
+        {
+            return Task.FromResult(HealthCheckResult.Healthy("Everything looks good"));
+        }
+        else
+        {
+            return Task.FromResult(new HealthCheckResult(context.Registration.FailureStatus,"System Unhealthy"));
+        }
+    }
+}
